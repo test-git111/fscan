@@ -38,13 +38,13 @@ func GOWebTitle(info *common.HostInfo) (err error, CheckData []WebScan.CheckData
 			info.Url = fmt.Sprintf("https://%s", info.Host)
 		default:
 			host := fmt.Sprintf("%s:%s", info.Host, info.Ports)
-			protocol := GetProtocol(host, info.Timeout)
+			protocol := GetProtocol(host, common.Timeout)
 			info.Url = fmt.Sprintf("%s://%s:%s", protocol, info.Host, info.Ports)
 		}
 	} else {
 		if !strings.Contains(info.Url, "://") {
 			host := strings.Split(info.Url, "/")[0]
-			protocol := GetProtocol(host, info.Timeout)
+			protocol := GetProtocol(host, common.Timeout)
 			info.Url = fmt.Sprintf("%s://%s", protocol, info.Url)
 		}
 	}
@@ -75,8 +75,8 @@ func GOWebTitle(info *common.HostInfo) (err error, CheckData []WebScan.CheckData
 			}
 		}
 	}
-
-	err, _, CheckData = geturl(info, 2, CheckData)
+	//是否访问图标
+	//err, _, CheckData = geturl(info, 2, CheckData)
 	if err != nil {
 		return
 	}
@@ -105,11 +105,12 @@ func geturl(info *common.HostInfo, flag int, CheckData []WebScan.CheckDatas) (er
 	req.Header.Set("User-agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1468.0 Safari/537.36")
 	req.Header.Set("Accept", "*/*")
 	req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9")
-	if common.Pocinfo.Cookie != "" {
-		req.Header.Set("Cookie", "rememberMe=1;"+common.Pocinfo.Cookie)
-	} else {
-		req.Header.Set("Cookie", "rememberMe=1")
-	}
+	req.Header.Set("Cookie", common.Cookie)
+	//if common.Pocinfo.Cookie != "" {
+	//	req.Header.Set("Cookie", "rememberMe=1;"+common.Pocinfo.Cookie)
+	//} else {
+	//	req.Header.Set("Cookie", "rememberMe=1")
+	//}
 	req.Header.Set("Connection", "close")
 	var client *http.Client
 	if flag == 1 {
@@ -189,7 +190,7 @@ func getRespBody(oResp *http.Response) ([]byte, error) {
 }
 
 func gettitle(body []byte) (title string) {
-	re := regexp.MustCompile("(?ims)<title>(.*)</title>")
+	re := regexp.MustCompile("(?ims)<title>(.*?)</title>")
 	find := re.FindSubmatch(body)
 	if len(find) > 1 {
 		title = string(find[1])
@@ -217,7 +218,7 @@ func GetProtocol(host string, Timeout int64) (protocol string) {
 		return
 	}
 
-	socksconn, err := common.WrapperTcpWithTimeout("tcp", host, time.Duration(Timeout) * time.Second)
+	socksconn, err := common.WrapperTcpWithTimeout("tcp", host, time.Duration(Timeout)*time.Second)
 	if err != nil {
 		return
 	}

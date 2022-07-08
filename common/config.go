@@ -1,6 +1,6 @@
 package common
 
-var version = "1.7.1"
+var version = "1.8.1"
 var Userdict = map[string][]string{
 	"ftp":        {"ftp", "admin", "www", "web", "root", "db", "wwwroot", "data"},
 	"mysql":      {"root", "mysql"},
@@ -45,44 +45,31 @@ var Webport = "80,81,82,83,84,85,86,87,88,89,90,91,92,98,99,443,800,801,808,880,
 var DefaultPorts = "21,22,80,81,135,139,443,445,1433,1521,3306,5432,6379,7001,8000,8080,8089,9000,9200,11211,27017"
 
 type HostInfo struct {
-	Host      string
-	Ports     string
-	Domain    string
-	Url       string
-	Path      string
-	Timeout   int64
-	Scantype  string
-	Command   string
-	SshKey    string
-	Username  string
-	Password  string
-	Usernames []string
-	Passwords []string
-	Infostr   []string
-	Hash      string
+	Host    string
+	Ports   string
+	Url     string
+	Infostr []string
 }
 
 type PocInfo struct {
-	Num        int
-	Rate       int
-	Timeout    int64
-	Proxy      string
-	PocName    string
-	PocDir     string
-	Target     string
-	TargetFile string
-	RawFile    string
-	Cookie     string
-	ForceSSL   bool
-	ApiKey     string
-	CeyeDomain string
+	Target  string
+	PocName string
 }
 
 var (
+	Path          string
+	Scantype      string
+	Command       string
+	SshKey        string
+	Domain        string
+	Username      string
+	Password      string
+	Proxy         string
+	Timeout       int64
+	WebTimeout    int64
 	TmpOutputfile string
 	TmpSave       bool
 	IsPing        bool
-	IsWmi         bool
 	Ping          bool
 	Pocinfo       PocInfo
 	IsWebCan      bool
@@ -107,4 +94,12 @@ var (
 	BruteThread   int
 	LiveTop       int
 	Socks5Proxy   string
+)
+
+var (
+	PocNum     int
+	PocFull    bool
+	CeyeDomain string
+	ApiKey     string
+	Cookie     string
 )

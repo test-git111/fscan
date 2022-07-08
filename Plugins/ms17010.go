@@ -33,7 +33,7 @@ func MS17010(info *common.HostInfo) error {
 func MS17010Scan(info *common.HostInfo) error {
 	ip := info.Host
 	// connecting to a host in LAN if reachable should be very quick
-	conn, err := common.WrapperTcpWithTimeout("tcp", ip+":445", time.Duration(info.Timeout)*time.Second)
+	conn, err := common.WrapperTcpWithTimeout("tcp", ip+":445", time.Duration(common.Timeout)*time.Second)
 	defer func() {
 		if conn != nil {
 			conn.Close()
@@ -43,7 +43,7 @@ func MS17010Scan(info *common.HostInfo) error {
 		//fmt.Printf("failed to connect to %s\n", ip)
 		return err
 	}
-	err = conn.SetDeadline(time.Now().Add(time.Duration(info.Timeout) * time.Second))
+	err = conn.SetDeadline(time.Now().Add(time.Duration(common.Timeout) * time.Second))
 	if err != nil {
 		//fmt.Printf("failed to connect to %s\n", ip)
 		return err
@@ -131,6 +131,11 @@ func MS17010Scan(info *common.HostInfo) error {
 		//} else{fmt.Printf("\033[33m%s\tMS17-010\t(%s)\033[0m\n", ip, os)}
 		result := fmt.Sprintf("[+] %s\tMS17-010\t(%s)", ip, os)
 		common.LogSuccess(result)
+		defer func() {
+			if common.SC != "" {
+				MS17010EXP(info)
+			}
+		}()
 		// detect present of DOUBLEPULSAR SMB implant
 		trans2SessionSetupRequest[28] = treeID[0]
 		trans2SessionSetupRequest[29] = treeID[1]
